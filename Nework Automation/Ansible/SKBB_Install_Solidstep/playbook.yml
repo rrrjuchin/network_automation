@@ -1,0 +1,30 @@
+---
+---
+- name: script for solidstep installation
+  hosts: all
+  tasks:
+    # tasks file for sec_chk
+    - name: install wget
+      yum:
+        name: wget
+        state: latest
+    - name: Create Directory /SSR
+      file:
+        path: /SSR
+        owner: root
+        group: root
+        mode: '0644'
+        state: directory
+    - name: Download Agent by wget
+      command: wget http://1.226.199.21:8088/Solidstep/agent_linux.tar -O /tmp/agent_linux.tar --no-check-certificate
+#- name: Extract
+#  command: tar -xvf /tmp/agent_linux.tar /tmp/linux
+    - name: Extract agent_linux.tar
+      unarchive:
+        src: /tmp/agent_linux.tar
+        dest: /tmp
+        remote_src: yes
+    - name: Run shell script for solidstep installation
+      command: sh ./Install.sh 2 1160 /SSR/
+      args:
+        chdir: /tmp/linux
